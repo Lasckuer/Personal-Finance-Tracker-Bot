@@ -3,7 +3,7 @@ apscheduler
 seaborn
 pandas
 matplotlib
-pyzbar
+qreader
 Pillow
 aiohttp
 python-dotenv

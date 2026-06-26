@@ -2,7 +2,8 @@ import aiohttp
 import asyncio
 import logging
 import os
-from pyzbar.pyzbar import decode
+import numpy as np
+from qreader import QReader
 from PIL import Image
 from concurrent.futures import ThreadPoolExecutor
 
@@ -11,13 +12,18 @@ PROVERKA_CHEKA_TOKEN = os.getenv("PROVERKA_CHEKA_TOKEN")
 logger = logging.getLogger(__name__)
 executor = ThreadPoolExecutor()
 
+qreader = QReader(model_size='n')
+
 def sync_decode_qr(image_path: str) -> str:
     try:
-        img = Image.open(image_path)
-        img.thumbnail((1024, 1024)) 
-        decoded_objects = decode(img)
-        if decoded_objects:
-            return decoded_objects[0].data.decode('utf-8')
+        img_pil = Image.open(image_path).convert('RGB')
+        img_array = np.array(img_pil)
+        
+        decoded_texts = qreader.detect_and_decode(image=img_array)
+        
+        if decoded_texts and decoded_texts[0] is not None:
+            return decoded_texts[0]
+            
     except Exception as e:
         logger.error(f"Ошибка при чтении QR из {image_path}: {e}")
     return None
@@ -46,4 +52,4 @@ async def fetch_receipt_data(qr_raw: str):
         return {"code": 0, "data": "Время ожидания истекло"}
     except Exception as e:
         logger.error(f"Сетевая ошибка при запросе к API чеков: {e}")
-        return None
+    return None

@@ -24,7 +24,7 @@
 
 ### 1. Клонирование репозитория
 ```bash
-git clone [https://github.com/Lasckuer/TelegramBot.git](https://github.com/Lasckuer/TelegramBot.git)
+git clone https://github.com/Lasckuer/TelegramBot.git
 cd TelegramBot
 git checkout SQLite-db
 ```
